@@ -9,7 +9,6 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       id: "credentials",
       name: "Credentials",
-
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
@@ -24,22 +23,19 @@ export const authOptions: NextAuthOptions = {
             ],
           });
           if (!user) {
-            throw new Error("no user found with this email");
+            throw new Error("No user found with this email");
           }
-
           if (!user.isVerified) {
-            throw new Error("Please verify your account before logged in");
+            throw new Error("Please verify your account before logging in");
           }
-
           const isPasswordCorrect = await bcrypt.compare(
             credentials.password,
             user.password
           );
-
           if (isPasswordCorrect) {
             return user;
           } else {
-            throw new Error("incorrect password");
+            throw new Error("Incorrect password");
           }
         } catch (err: any) {
           throw new Error(err);
@@ -47,14 +43,13 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token._id = user._id?.toString(); // Convert ObjectId to string
-        ((token.isVerified = user.isVerified),
-          (token.isAcceptingMessages = user.isAcceptingMessages),
-          (token.username = user.username));
+        token.isVerified = user.isVerified;
+        token.isAcceptingMessages = user.isAcceptingMessages;
+        token.username = user.username;
       }
       return token;
     },
@@ -68,7 +63,6 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-
   session: {
     strategy: "jwt",
   },
